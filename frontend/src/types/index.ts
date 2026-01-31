@@ -48,7 +48,8 @@ export interface CreateCategoriaDto {
 export interface CreateTransacaoDto {
   descricao: string;
   valor: number;
-  data: string;
+  data: string; // Para uso no formulário
+  Data?: string; // Para envio ao backend C# (PascalCase)
   tipo: number;
   pessoaId?: number;
   categoriaId?: number;

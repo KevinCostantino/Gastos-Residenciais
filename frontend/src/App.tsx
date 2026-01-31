@@ -69,7 +69,7 @@ function App() {
 
       <footer className="system-footer">
         <div className="footer-info">
-          <span>VERSÃO 1.0.0</span>
+          <span>VERSÃO 1.1.6</span>
           <span>REACT + TYPESCRIPT</span>
           <span>STATUS: ATIVO</span>
         </div>

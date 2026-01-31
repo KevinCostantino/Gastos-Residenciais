@@ -24,6 +24,11 @@ namespace GastosResiduenciais.Api.DTOs
         public decimal Valor { get; set; }
 
         /// <summary>
+        /// Data da transação. Se não informada, usará a data atual.
+        /// </summary>
+        public DateTime? Data { get; set; }
+
+        /// <summary>
         /// Tipo da transação (Despesa ou Receita).
         /// </summary>
         [Required(ErrorMessage = "Tipo é obrigatório")]

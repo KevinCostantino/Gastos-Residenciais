@@ -104,14 +104,14 @@ export const categoriasService = {
 export const transacoesService = {
   async getAll(): Promise<Transacao[]> {
     const data = await apiRequest<any[]>('/transacoes');
-    // Mapear DataCriacao para data
+    // Mapear DataCriacao para data (backend C# retorna em PascalCase)
     return data.map(item => {
-      const mappedItem = {
+      const dataValue = item.dataCriacao || item.DataCriacao;
+      console.log('Item recebido:', { id: item.id, descricao: item.descricao, dataCriacao: item.dataCriacao, DataCriacao: item.DataCriacao });
+      return {
         ...item,
-        data: item.dataCriacao || item.DataCriacao || new Date().toISOString()
+        data: dataValue || new Date().toISOString()
       };
-      console.log('Transação mapeada:', mappedItem); // Debug
-      return mappedItem;
     });
   },
 

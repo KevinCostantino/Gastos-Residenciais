@@ -79,11 +79,19 @@ const TransacoesManager: React.FC = () => {
     }
 
     try {
-      const submitData = {
-        ...formData,
+      // Preparar data no formato que o backend C# espera
+      const dataISO = formData.data ? new Date(formData.data + 'T00:00:00').toISOString() : new Date().toISOString();
+      
+      const submitData: any = {
+        descricao: formData.descricao,
+        valor: formData.valor,
+        Data: dataISO, // Backend C# espera com D maiúsculo
+        tipo: formData.tipo,
         pessoaId: formData.pessoaId || undefined,
         categoriaId: formData.categoriaId || undefined
       };
+
+      console.log('Enviando transação com data:', submitData.Data); // Debug
 
       if (editingTransacao) {
         await transacoesService.update(editingTransacao.id!, submitData);

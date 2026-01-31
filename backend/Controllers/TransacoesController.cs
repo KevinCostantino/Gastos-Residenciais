@@ -163,7 +163,7 @@ namespace GastosResiduenciais.Api.Controllers
                 Tipo = criarTransacaoDTO.Tipo,
                 CategoriaId = criarTransacaoDTO.CategoriaId,
                 PessoaId = criarTransacaoDTO.PessoaId,
-                DataCriacao = DateTime.Now
+                DataCriacao = criarTransacaoDTO.Data ?? DateTime.Now
             };
 
             _context.Transacoes.Add(transacao);
