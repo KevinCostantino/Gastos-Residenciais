@@ -107,7 +107,6 @@ export const transacoesService = {
     // Mapear DataCriacao para data (backend C# retorna em PascalCase)
     return data.map(item => {
       const dataValue = item.dataCriacao || item.DataCriacao;
-      console.log('Item recebido:', { id: item.id, descricao: item.descricao, dataCriacao: item.dataCriacao, DataCriacao: item.DataCriacao });
       return {
         ...item,
         data: dataValue || new Date().toISOString()
