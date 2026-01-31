@@ -103,18 +103,37 @@ export const categoriasService = {
 
 export const transacoesService = {
   async getAll(): Promise<Transacao[]> {
-    return apiRequest<Transacao[]>('/transacoes');
+    const data = await apiRequest<any[]>('/transacoes');
+    // Mapear DataCriacao para data
+    return data.map(item => {
+      const mappedItem = {
+        ...item,
+        data: item.dataCriacao || item.DataCriacao || new Date().toISOString()
+      };
+      console.log('Transação mapeada:', mappedItem); // Debug
+      return mappedItem;
+    });
   },
 
   async getById(id: number): Promise<Transacao> {
-    return apiRequest<Transacao>(`/transacoes/${id}`);
+    const item = await apiRequest<any>(`/transacoes/${id}`);
+    // Mapear DataCriacao para data
+    return {
+      ...item,
+      data: item.dataCriacao || item.DataCriacao || new Date().toISOString()
+    };
   },
 
   async create(data: any): Promise<Transacao> {
-    return apiRequest<Transacao>('/transacoes', {
+    const item = await apiRequest<any>('/transacoes', {
       method: 'POST',
       body: JSON.stringify(data)
     });
+    // Mapear DataCriacao para data
+    return {
+      ...item,
+      data: item.dataCriacao || item.DataCriacao || new Date().toISOString()
+    };
   },
 
   async update(id: number, data: any): Promise<Transacao> {

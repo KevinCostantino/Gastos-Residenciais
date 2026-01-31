@@ -24,7 +24,9 @@ const CategoriasManager: React.FC = () => {
     try {
       setLoading(true);
       const data = await categoriasService.getAll();
-      setCategorias(data);
+      // Ordenar por ID
+      const sortedData = data.sort((a, b) => a.id! - b.id!);
+      setCategorias(sortedData);
       showMessage('Categorias carregadas com sucesso', 'success');
     } catch (error) {
       console.error('Erro ao carregar categorias:', error);

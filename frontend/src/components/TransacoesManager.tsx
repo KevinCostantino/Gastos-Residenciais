@@ -195,7 +195,39 @@ const TransacoesManager: React.FC = () => {
   };
 
   const formatDate = (dateString: string): string => {
-    return new Date(dateString).toLocaleDateString('pt-BR');
+    try {
+      // Tentar diferentes formatos de data
+      let date: Date;
+      
+      if (!dateString) {
+        return 'Sem data';
+      }
+      
+      // Se já está no formato brasileiro
+      if (dateString.includes('/')) {
+        return dateString;
+      }
+      
+      date = new Date(dateString);
+      
+      if (isNaN(date.getTime())) {
+        // Tentar parseamento alternativo
+        const parts = dateString.split(/[-T]/);
+        if (parts.length >= 3) {
+          date = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+        }
+      }
+      
+      if (isNaN(date.getTime())) {
+        console.warn('Data inválida recebida:', dateString);
+        return 'Data inválida';
+      }
+      
+      return date.toLocaleDateString('pt-BR');
+    } catch (error) {
+      console.error('Erro ao formatar data:', error, 'Data:', dateString);
+      return 'Erro na data';
+    }
   };
 
   const calculateTotal = () => {

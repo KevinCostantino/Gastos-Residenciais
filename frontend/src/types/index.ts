@@ -22,6 +22,8 @@ export interface Transacao {
   descricao: string;
   valor: number;
   data: string;
+  dataCriacao?: string; // Campo do backend em camelCase (JavaScript style)
+  DataCriacao?: string; // Campo do backend em PascalCase (C# style)
   tipo: number; // 1 = Despesa, 2 = Receita
   tipoDescricao?: string;
   pessoaId?: number;
