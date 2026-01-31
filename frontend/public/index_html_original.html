@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gastos Residenciais</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            border-radius: 10px;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .nav button {
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+
+        .nav button:hover {
+            background: #5a6fd8;
+        }
+
+        .nav button.active {
+            background: #764ba2;
+        }
+
+        .section {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #555;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e1e1;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            padding: 12px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            margin-right: 10px;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #5a6fd8;
+        }
+
+        button.danger {
+            background: #e74c3c;
+        }
+
+        button.danger:hover {
+            background: #c0392b;
+        }
+
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+        }
+
+        .list-item:hover {
+            background: #e9ecef;
+        }
+
+        .list-item-content {
+            flex: 1;
+        }
+
+        .list-item-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .error {
+            color: #e74c3c;
+            background: #fdf2f2;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #e74c3c;
+            margin-bottom: 1rem;
+        }
+
+        .success {
+            color: #27ae60;
+            background: #f2fdf2;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #27ae60;
+            margin-bottom: 1rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .totals-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .totals-table th,
+        .totals-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .totals-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+
+        .positive {
+            color: #27ae60;
+        }
+
+        .negative {
+            color: #e74c3c;
+        }
+
+        .footer-total {
+            background-color: #667eea !important;
+            color: white !important;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                flex-direction: column;
+            }
+
+            .list-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .list-item-actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Sistema de Gastos Residenciais</h1>
+            <p>Controle suas finanças pessoais de forma simples e eficiente</p>
+        </header>
+
+        <div class="nav">
+            <button onclick="showSection('pessoas')" class="active">Pessoas</button>
+            <button onclick="showSection('categorias')">Categorias</button>
+            <button onclick="showSection('transacoes')">Transações</button>
+            <button onclick="showSection('relatorios')">Relatórios</button>
+        </div>
+
+        <div id="error-container"></div>
+        <div id="success-container"></div>
+
+        <!-- Seção Pessoas -->
+        <div id="pessoas-section" class="section">
+            <h2>Gerenciar Pessoas</h2>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="pessoa-nome">Nome:</label>
+                    <input type="text" id="pessoa-nome" placeholder="Digite o nome da pessoa" maxlength="200">
+                </div>
+                <div class="form-group">
+                    <label for="pessoa-idade">Idade:</label>
+                    <input type="number" id="pessoa-idade" placeholder="Digite a idade" min="0" max="150">
+                </div>
+            </div>
+            
+            <button onclick="criarPessoa()">Cadastrar Pessoa</button>
+            <button onclick="carregarPessoas()">Atualizar Lista</button>
+            
+            <div id="pessoas-list"></div>
+        </div>
+
+        <!-- Seção Categorias -->
+        <div id="categorias-section" class="section hidden">
+            <h2>Gerenciar Categorias</h2>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="categoria-descricao">Descrição:</label>
+                    <input type="text" id="categoria-descricao" placeholder="Digite a descrição da categoria" maxlength="400">
+                </div>
+                <div class="form-group">
+                    <label for="categoria-finalidade">Finalidade:</label>
+                    <select id="categoria-finalidade">
+                        <option value="">Selecione a finalidade</option>
+                        <option value="1">Despesa</option>
+                        <option value="2">Receita</option>
+                        <option value="3">Ambas</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button onclick="criarCategoria()">Cadastrar Categoria</button>
+            <button onclick="carregarCategorias()">Atualizar Lista</button>
+            
+            <div id="categorias-list"></div>
+        </div>
+
+        <!-- Seção Transações -->
+        <div id="transacoes-section" class="section hidden">
+            <h2>Gerenciar Transações</h2>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="transacao-descricao">Descrição:</label>
+                    <input type="text" id="transacao-descricao" placeholder="Digite a descrição da transação" maxlength="400">
+                </div>
+                <div class="form-group">
+                    <label for="transacao-valor">Valor:</label>
+                    <input type="number" id="transacao-valor" placeholder="Digite o valor" min="0.01" step="0.01">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="transacao-tipo">Tipo:</label>
+                    <select id="transacao-tipo" onchange="atualizarCategoriasPorTipo()">
+                        <option value="">Selecione o tipo</option>
+                        <option value="1">Despesa</option>
+                        <option value="2">Receita</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="transacao-categoria">Categoria:</label>
+                    <select id="transacao-categoria">
+                        <option value="">Selecione a categoria</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="transacao-pessoa">Pessoa:</label>
+                <select id="transacao-pessoa">
+                    <option value="">Selecione a pessoa</option>
+                </select>
+            </div>
+            
+            <button onclick="criarTransacao()">Registrar Transação</button>
+            <button onclick="carregarTransacoes()">Atualizar Lista</button>
+            
+            <div id="transacoes-list"></div>
+        </div>
+
+        <!-- Seção Relatórios -->
+        <div id="relatorios-section" class="section hidden">
+            <h2>Relatórios e Estatísticas</h2>
+            
+            <div class="nav">
+                <button onclick="carregarRelatoriosPessoas()">Totais por Pessoa</button>
+                <button onclick="carregarRelatoriosCategorias()">Totais por Categoria</button>
+                <button onclick="carregarEstatisticas()">Estatísticas Gerais</button>
+            </div>
+            
+            <div id="relatorios-content"></div>
+        </div>
+    </div>
+
+    <script>
+        // Configuração da API
+        const API_BASE_URL = 'http://localhost:5118/api';
+
+        // Estado da aplicação
+        let currentEditId = null;
+        let pessoas = [];
+        let categorias = [];
+        let transacoes = [];
+
+        // Funções de navegação
+        function showSection(sectionName) {
+            // Esconder todas as seções
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            
+            // Remover classe active de todos os botões
+            document.querySelectorAll('.nav button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Mostrar seção selecionada
+            document.getElementById(sectionName + '-section').classList.remove('hidden');
+            
+            // Marcar botão como ativo
+            event.target.classList.add('active');
+            
+            // Carregar dados da seção
+            if (sectionName === 'pessoas') {
+                carregarPessoas();
+            } else if (sectionName === 'categorias') {
+                carregarCategorias();
+            } else if (sectionName === 'transacoes') {
+                carregarTransacoes();
+                carregarPessoasParaSelect();
+                carregarCategoriasParaSelect();
+            }
+        }
+
+        // Funções de utilidade
+        function showError(message) {
+            const container = document.getElementById('error-container');
+            container.innerHTML = `<div class="error">${message}</div>`;
+            setTimeout(() => container.innerHTML = '', 5000);
+        }
+
+        function showSuccess(message) {
+            const container = document.getElementById('success-container');
+            container.innerHTML = `<div class="success">${message}</div>`;
+            setTimeout(() => container.innerHTML = '', 3000);
+        }
+
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(value);
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleString('pt-BR');
+        }
+
+        // Funções da API - Pessoas
+        async function carregarPessoas() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/pessoas`);
+                if (!response.ok) throw new Error('Erro ao carregar pessoas');
+                
+                pessoas = await response.json();
+                renderizarPessoas();
+            } catch (error) {
+                showError('Erro ao carregar pessoas: ' + error.message);
+            }
+        }
+
+        async function criarPessoa() {
+            const nome = document.getElementById('pessoa-nome').value.trim();
+            const idade = parseInt(document.getElementById('pessoa-idade').value);
+
+            if (!nome || !idade) {
+                showError('Por favor, preencha todos os campos');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/pessoas`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nome, idade })
+                });
+
+                if (!response.ok) {
+                    const error = await response.text();
+                    throw new Error(error);
+                }
+
+                showSuccess('Pessoa cadastrada com sucesso!');
+                document.getElementById('pessoa-nome').value = '';
+                document.getElementById('pessoa-idade').value = '';
+                carregarPessoas();
+            } catch (error) {
+                showError('Erro ao cadastrar pessoa: ' + error.message);
+            }
+        }
+
+        async function excluirPessoa(id) {
+            if (!confirm('Tem certeza? Isso também excluirá todas as transações desta pessoa.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/pessoas/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (!response.ok) throw new Error('Erro ao excluir pessoa');
+
+                showSuccess('Pessoa excluída com sucesso!');
+                carregarPessoas();
+            } catch (error) {
+                showError('Erro ao excluir pessoa: ' + error.message);
+            }
+        }
+
+        function renderizarPessoas() {
+            const container = document.getElementById('pessoas-list');
+            if (pessoas.length === 0) {
+                container.innerHTML = '<p>Nenhuma pessoa cadastrada.</p>';
+                return;
+            }
+
+            container.innerHTML = pessoas.map(pessoa => `
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <strong>${pessoa.nome}</strong><br>
+                        <small>Idade: ${pessoa.idade} anos ${pessoa.isMenorDeIdade ? '(Menor de idade)' : ''}</small><br>
+                        <small>Transações: ${pessoa.totalTransacoes}</small>
+                    </div>
+                    <div class="list-item-actions">
+                        <button class="danger" onclick="excluirPessoa(${pessoa.id})">Excluir</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Funções da API - Categorias
+        async function carregarCategorias() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/categorias`);
+                if (!response.ok) throw new Error('Erro ao carregar categorias');
+                
+                categorias = await response.json();
+                renderizarCategorias();
+            } catch (error) {
+                showError('Erro ao carregar categorias: ' + error.message);
+            }
+        }
+
+        async function criarCategoria() {
+            const descricao = document.getElementById('categoria-descricao').value.trim();
+            const finalidade = parseInt(document.getElementById('categoria-finalidade').value);
+
+            if (!descricao || !finalidade) {
+                showError('Por favor, preencha todos os campos');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/categorias`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ descricao, finalidade })
+                });
+
+                if (!response.ok) {
+                    const error = await response.text();
+                    throw new Error(error);
+                }
+
+                showSuccess('Categoria cadastrada com sucesso!');
+                document.getElementById('categoria-descricao').value = '';
+                document.getElementById('categoria-finalidade').value = '';
+                carregarCategorias();
+            } catch (error) {
+                showError('Erro ao cadastrar categoria: ' + error.message);
+            }
+        }
+
+        function renderizarCategorias() {
+            const container = document.getElementById('categorias-list');
+            if (categorias.length === 0) {
+                container.innerHTML = '<p>Nenhuma categoria cadastrada.</p>';
+                return;
+            }
+
+            container.innerHTML = categorias.map(categoria => `
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <strong>${categoria.descricao}</strong><br>
+                        <small>Finalidade: ${categoria.finalidadeDescricao}</small><br>
+                        <small>Transações: ${categoria.totalTransacoes}</small>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Funções da API - Transações
+        async function carregarTransacoes() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/transacoes`);
+                if (!response.ok) throw new Error('Erro ao carregar transações');
+                
+                transacoes = await response.json();
+                renderizarTransacoes();
+            } catch (error) {
+                showError('Erro ao carregar transações: ' + error.message);
+            }
+        }
+
+        async function criarTransacao() {
+            const descricao = document.getElementById('transacao-descricao').value.trim();
+            const valor = parseFloat(document.getElementById('transacao-valor').value);
+            const tipo = parseInt(document.getElementById('transacao-tipo').value);
+            const categoriaId = parseInt(document.getElementById('transacao-categoria').value);
+            const pessoaId = parseInt(document.getElementById('transacao-pessoa').value);
+
+            if (!descricao || !valor || !tipo || !categoriaId || !pessoaId) {
+                showError('Por favor, preencha todos os campos');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/transacoes`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ descricao, valor, tipo, categoriaId, pessoaId })
+                });
+
+                if (!response.ok) {
+                    const error = await response.text();
+                    throw new Error(error);
+                }
+
+                showSuccess('Transação registrada com sucesso!');
+                document.getElementById('transacao-descricao').value = '';
+                document.getElementById('transacao-valor').value = '';
+                document.getElementById('transacao-tipo').value = '';
+                document.getElementById('transacao-categoria').value = '';
+                document.getElementById('transacao-pessoa').value = '';
+                carregarTransacoes();
+            } catch (error) {
+                showError('Erro ao registrar transação: ' + error.message);
+            }
+        }
+
+        async function carregarPessoasParaSelect() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/pessoas`);
+                if (!response.ok) return;
+                
+                const pessoas = await response.json();
+                const select = document.getElementById('transacao-pessoa');
+                select.innerHTML = '<option value="">Selecione a pessoa</option>';
+                
+                pessoas.forEach(pessoa => {
+                    select.innerHTML += `<option value="${pessoa.id}">${pessoa.nome} (${pessoa.idade} anos)</option>`;
+                });
+            } catch (error) {
+                console.error('Erro ao carregar pessoas para select:', error);
+            }
+        }
+
+        async function carregarCategoriasParaSelect() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/categorias`);
+                if (!response.ok) return;
+                
+                categorias = await response.json();
+                atualizarCategoriasPorTipo();
+            } catch (error) {
+                console.error('Erro ao carregar categorias para select:', error);
+            }
+        }
+
+        function atualizarCategoriasPorTipo() {
+            const tipo = document.getElementById('transacao-tipo').value;
+            const select = document.getElementById('transacao-categoria');
+            
+            select.innerHTML = '<option value="">Selecione a categoria</option>';
+            
+            if (!tipo) return;
+            
+            const categoriasFiltradas = categorias.filter(cat => {
+                if (cat.finalidade === 3) return true; // Ambas
+                if (tipo === '1' && cat.finalidade === 1) return true; // Despesa
+                if (tipo === '2' && cat.finalidade === 2) return true; // Receita
+                return false;
+            });
+            
+            categoriasFiltradas.forEach(categoria => {
+                select.innerHTML += `<option value="${categoria.id}">${categoria.descricao}</option>`;
+            });
+        }
+
+        function renderizarTransacoes() {
+            const container = document.getElementById('transacoes-list');
+            if (transacoes.length === 0) {
+                container.innerHTML = '<p>Nenhuma transação registrada.</p>';
+                return;
+            }
+
+            container.innerHTML = transacoes.map(transacao => `
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <strong>${transacao.descricao}</strong><br>
+                        <small>Valor: ${formatCurrency(transacao.valor)} (${transacao.tipoDescricao})</small><br>
+                        <small>Pessoa: ${transacao.pessoaNome} | Categoria: ${transacao.categoriaNome}</small><br>
+                        <small>Data: ${formatDate(transacao.dataCriacao)}</small>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Funções de Relatórios
+        async function carregarRelatoriosPessoas() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/pessoas/relatorio-totais`);
+                if (!response.ok) throw new Error('Erro ao carregar relatório');
+                
+                const data = await response.json();
+                renderizarRelatoriosPessoas(data);
+            } catch (error) {
+                showError('Erro ao carregar relatório: ' + error.message);
+            }
+        }
+
+        async function carregarRelatoriosCategorias() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/categorias/relatorio-totais`);
+                if (!response.ok) throw new Error('Erro ao carregar relatório');
+                
+                const data = await response.json();
+                renderizarRelatoriosCategorias(data);
+            } catch (error) {
+                showError('Erro ao carregar relatório: ' + error.message);
+            }
+        }
+
+        async function carregarEstatisticas() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/transacoes/estatisticas`);
+                if (!response.ok) throw new Error('Erro ao carregar estatísticas');
+                
+                const stats = await response.json();
+                renderizarEstatisticas(stats);
+            } catch (error) {
+                showError('Erro ao carregar estatísticas: ' + error.message);
+            }
+        }
+
+        function renderizarRelatoriosPessoas(data) {
+            const container = document.getElementById('relatorios-content');
+            
+            let html = '<h3>Totais por Pessoa</h3>';
+            html += '<table class="totais-table">';
+            html += '<thead><tr><th>Pessoa</th><th>Receitas</th><th>Despesas</th><th>Saldo</th></tr></thead>';
+            html += '<tbody>';
+            
+            data.totaisPorPessoa.forEach(item => {
+                const saldoClass = item.saldo >= 0 ? 'positive' : 'negative';
+                html += `<tr>
+                    <td>${item.nome}</td>
+                    <td class="positive">${formatCurrency(item.totalReceitas)}</td>
+                    <td class="negative">${formatCurrency(item.totalDespesas)}</td>
+                    <td class="${saldoClass}">${formatCurrency(item.saldo)}</td>
+                </tr>`;
+            });
+            
+            const totalClass = data.totalGeral.saldoLiquido >= 0 ? 'positive' : 'negative';
+            html += `<tr class="footer-total">
+                <td><strong>TOTAL GERAL</strong></td>
+                <td><strong>${formatCurrency(data.totalGeral.totalReceitas)}</strong></td>
+                <td><strong>${formatCurrency(data.totalGeral.totalDespesas)}</strong></td>
+                <td class="${totalClass}"><strong>${formatCurrency(data.totalGeral.saldoLiquido)}</strong></td>
+            </tr>`;
+            
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        function renderizarRelatoriosCategorias(data) {
+            const container = document.getElementById('relatorios-content');
+            
+            let html = '<h3>Totais por Categoria</h3>';
+            html += '<table class="totais-table">';
+            html += '<thead><tr><th>Categoria</th><th>Receitas</th><th>Despesas</th><th>Saldo</th></tr></thead>';
+            html += '<tbody>';
+            
+            data.totaisPorCategoria.forEach(item => {
+                const saldoClass = item.saldo >= 0 ? 'positive' : 'negative';
+                html += `<tr>
+                    <td>${item.descricao}</td>
+                    <td class="positive">${formatCurrency(item.totalReceitas)}</td>
+                    <td class="negative">${formatCurrency(item.totalDespesas)}</td>
+                    <td class="${saldoClass}">${formatCurrency(item.saldo)}</td>
+                </tr>`;
+            });
+            
+            const totalClass = data.totalGeral.saldoLiquido >= 0 ? 'positive' : 'negative';
+            html += `<tr class="footer-total">
+                <td><strong>TOTAL GERAL</strong></td>
+                <td><strong>${formatCurrency(data.totalGeral.totalReceitas)}</strong></td>
+                <td><strong>${formatCurrency(data.totalGeral.totalDespesas)}</strong></td>
+                <td class="${totalClass}"><strong>${formatCurrency(data.totalGeral.saldoLiquido)}</strong></td>
+            </tr>`;
+            
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        function renderizarEstatisticas(stats) {
+            const container = document.getElementById('relatorios-content');
+            
+            const saldoClass = stats.saldoGeral >= 0 ? 'positive' : 'negative';
+            
+            let html = '<h3>Estatísticas Gerais</h3>';
+            html += '<div class="stats">';
+            html += `<div class="stat-card">
+                <div class="stat-value">${stats.totalTransacoes}</div>
+                <div class="stat-label">Total de Transações</div>
+            </div>`;
+            html += `<div class="stat-card">
+                <div class="stat-value">${formatCurrency(stats.totalReceitas)}</div>
+                <div class="stat-label">Total de Receitas</div>
+            </div>`;
+            html += `<div class="stat-card">
+                <div class="stat-value">${formatCurrency(stats.totalDespesas)}</div>
+                <div class="stat-label">Total de Despesas</div>
+            </div>`;
+            html += `<div class="stat-card">
+                <div class="stat-value ${saldoClass}">${formatCurrency(stats.saldoGeral)}</div>
+                <div class="stat-label">Saldo Geral</div>
+            </div>`;
+            html += '</div>';
+            
+            if (stats.ultimaTransacao) {
+                html += '<h4>Última Transação</h4>';
+                html += `<p><strong>${stats.ultimaTransacao.descricao}</strong> - ${formatDate(stats.ultimaTransacao.dataCriacao)}</p>`;
+            }
+            
+            container.innerHTML = html;
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            carregarPessoas();
+        });
+    </script>
+</body>
+</html>
